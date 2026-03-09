@@ -30,12 +30,16 @@ router.register(r'activities', ActivityViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'workouts', WorkoutViewSet)
 
-# Generate base URL for documentation
-codespace_name = os.environ.get('CODESPACE_NAME')
-if codespace_name:
-    base_url = f"https://{codespace_name}-8000.app.github.dev"
-else:
-    base_url = "http://localhost:8000"
+# Helper to get the base API URL for documentation or responses
+def get_base_api_url(request=None):
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    if codespace_name:
+        return f"https://{codespace_name}-8000.app.github.dev/api/"
+    if request is not None:
+        scheme = request.scheme
+        host = request.get_host()
+        return f"{scheme}://{host}/api/"
+    return "http://localhost:8000/api/"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
